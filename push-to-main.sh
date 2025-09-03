@@ -1,18 +1,29 @@
 #!/bin/bash
+# Script to merge dev branch into main and push to remote
 
-# Get current branch
-CURRENT_BRANCH=$(git branch --show-current)
+set -e
 
-# Push current branch to remote
-echo "Pushing $CURRENT_BRANCH to remote..."
-git push origin "$CURRENT_BRANCH"
+# Add and commit any untracked or modified files in dev
+if [ -n "$(git status --porcelain)" ]; then
+    echo "Adding and committing changes in dev branch..."
+    git add .
+    git commit -m "Auto-commit before merging to main"
+fi
 
-# Switch to main branch
-echo "Switching to main branch..."
+# Checkout main branch
 git checkout main
 
 # Pull latest changes
-echo "Pulling latest changes from main..."
 git pull origin main
 
-echo "Done! Now on main branch with latest changes."
+# Merge dev into main
+git merge dev
+
+# Push main to remote
+git push origin main
+
+echo "dev branch has been merged into main and pushed to origin."
+
+# Switch back to dev branch
+git checkout dev
+echo "Switched back to dev branch."
